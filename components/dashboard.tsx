@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { ChevronRight } from "lucide-react";
 import { analytics, rebuildDerivedState } from "@/lib/engine";
+import { monthlyResponsibility, periodStats } from "@/lib/dashboard-stats";
 import { calendarKey, date, km, money, monthLabel, name } from "@/lib/format";
 import type { Snapshot, Settlement } from "@/lib/types";
 import { DemoBadge, Metric } from "./ui";
@@ -9,10 +10,14 @@ export function Donut({
   usage,
   label,
   compact = false,
+  showCaption = true,
+  responsibility,
 }: {
   usage: Record<string, number>;
   label: string;
   compact?: boolean;
+  showCaption?: boolean;
+  responsibility?: Record<string, number> | null;
 }) {
   const d = usage.danielle || 0,
     m = usage.maya || 0,
@@ -39,7 +44,7 @@ export function Donut({
           </div>
         </div>
       )}
-      <p className="chart-caption">Danielle vs Maya</p>
+      {showCaption && <p className="chart-caption">Danielle vs Maya</p>}
       <div className="legend totals">
         {["danielle", "maya"].map((p) => (
           <div key={p}>
@@ -51,6 +56,16 @@ export function Donut({
             <small>
               {total ? Math.round(((usage[p] || 0) / total) * 100) : 0}%
             </small>
+            {responsibility !== undefined && (
+              <small className="monthly-responsibility">
+                Responsibility ·{" "}
+                <b>
+                  {responsibility === null
+                    ? "—"
+                    : money(responsibility[p] || 0)}
+                </b>
+              </small>
+            )}
           </div>
         ))}
       </div>
@@ -136,6 +151,7 @@ export function Dashboard({
     derived.allocations,
     tab === "month" ? selected : tab === "year" ? year : "all",
   );
+  const period = periodStats(derived);
   return (
     <>
       <h1>Dashboard</h1>
@@ -162,33 +178,37 @@ export function Dashboard({
       </div>
       {tab === "period" ? (
         <>
-          <section className="card">
+          <section className="card dashboard-refined period-card">
             <h3>This charging period</h3>
-            <Donut usage={derived.open.usage} label="RANGE USED" />
+            <Donut
+              usage={derived.open.usage}
+              label="RANGE USED"
+              showCaption={false}
+            />
             <div className="divider" />
-            <Metric
-              label="Pending charging cost"
-              value={money(derived.open.cost)}
-            />
-            <Metric label="Cost / 100 km" value="—" />
-            <p className="hint">
-              Responsibility is finalized at the next normal/full charge.
-              Zero-usage charges remain pending.
-            </p>
-          </section>
-          <section className="card">
-            <Metric
-              label="Last logged range"
-              value={
-                derived.lastRange == null ? "—" : `${km(derived.lastRange)} km`
-              }
-            />
+            <div className="period-stats">
+              <Metric
+                label="Last logged range"
+                value={
+                  period.lastRange == null ? "—" : `${km(period.lastRange)} km`
+                }
+              />
+              <Metric label="Drives" value={period.drives} />
+              <Metric
+                label="Idle range loss"
+                value={`${km(period.idleLoss)} km`}
+              />
+              <Metric
+                label="Shared contribution"
+                value={`${km(period.sharedContribution)} km`}
+              />
+            </div>
           </section>
         </>
       ) : (
         <>
           {tab === "month" && (
-            <section className="card">
+            <section className="card dashboard-refined">
               <h3>Monthly breakdown</h3>
               <div className="legend">
                 <span>
@@ -249,7 +269,9 @@ export function Dashboard({
               <p className="chart-caption">Tap a month · scroll for older</p>
             </section>
           )}
-          <section className="card">
+          <section
+            className={`card${tab === "month" ? " dashboard-refined" : ""}`}
+          >
             <h3>
               {tab === "month"
                 ? monthLabel(selected, true)
@@ -260,6 +282,12 @@ export function Dashboard({
             <Donut
               usage={stats.usage}
               compact={tab === "month"}
+              showCaption={tab !== "month"}
+              responsibility={
+                tab === "month"
+                  ? monthlyResponsibility(stats.usage, stats.spend)
+                  : undefined
+              }
               label={
                 tab === "year"
                   ? year

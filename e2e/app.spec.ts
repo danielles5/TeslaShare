@@ -242,12 +242,66 @@ test("mobile dashboard, details and accessible sheet fit the viewport", async ({
     ...demoData(),
   });
   await page.getByRole("button", { name: "Dashboard", exact: true }).click();
+  const period = page.locator(".period-card");
+  await expect(period.getByText("28 km", { exact: true })).toBeVisible();
+  await expect(period.getByText("10 km", { exact: true })).toBeVisible();
+  for (const [label, value] of [
+    ["Last logged range", "382 km"],
+    ["Drives", "2"],
+    ["Idle range loss", "0 km"],
+    ["Shared contribution", "20 km"],
+  ]) {
+    await expect(
+      period.locator(".metric").filter({ hasText: label }).locator("strong"),
+    ).toHaveText(value);
+  }
+  await expect(
+    page.getByText("Last logged range", { exact: true }),
+  ).toHaveCount(1);
+  await expect(period).not.toContainText("Danielle vs Maya");
+  await expect(period).not.toContainText("Pending charging cost");
+  await expect(period).not.toContainText("Cost / 100 km");
+  await expect(period).not.toContainText("Responsibility is finalized");
+  await expect(period).not.toContainText("Zero-usage charges");
+  const beforeReload = await period.innerText();
+  const settlements = await page.locator(".settlement-list").innerHTML();
+  await page.screenshot({
+    path: "test-results/period-mobile.png",
+    fullPage: true,
+  });
+  await page.reload();
+  await page.getByRole("button", { name: "Dashboard", exact: true }).click();
+  await expect(period).toHaveText(beforeReload, { useInnerText: true });
+  await expect(page.locator(".settlement-list")).toHaveJSProperty(
+    "innerHTML",
+    settlements,
+  );
   await page.getByRole("button", { name: "Monthly Breakdown" }).click();
   await page.getByRole("button", { name: /August 2026: Danielle/ }).click();
   await expect(
     page.getByRole("heading", { name: "August 2026" }),
   ).toBeVisible();
   await expect(page.getByText("105 km", { exact: true })).toBeVisible();
+  await expect(page.locator(".monthly-responsibility")).toHaveText([
+    "Responsibility · ₪26.25",
+    "Responsibility · ₪38.75",
+  ]);
+  await expect(page.getByText("Danielle vs Maya", { exact: true })).toHaveCount(
+    0,
+  );
+  await expect(
+    page
+      .locator(".metric")
+      .filter({ hasText: "Danielle paid" })
+      .locator("strong"),
+  ).toHaveText("₪49.00");
+  await expect(
+    page.locator(".metric").filter({ hasText: "Maya paid" }).locator("strong"),
+  ).toHaveText("₪16.00");
+  await expect(page.locator(".settlement-list")).toHaveJSProperty(
+    "innerHTML",
+    settlements,
+  );
   expect(
     await page.evaluate(
       () => document.documentElement.scrollWidth <= window.innerWidth,

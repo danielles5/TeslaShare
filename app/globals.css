@@ -649,6 +649,34 @@ strong {
   justify-content: center;
   align-items: center;
 }
+.period-card .donut {
+  padding: 27px;
+}
+.dashboard-refined h3,
+.dashboard-refined strong,
+.dashboard-refined .monthly-responsibility b,
+.dashboard-tabs button.selected {
+  font-weight: 800;
+}
+.period-stats {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px 18px;
+}
+.period-stats .metric {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 3px;
+  padding: 0;
+}
+.period-stats .metric span {
+  font-size: 12px;
+}
+.monthly-responsibility {
+  margin-top: 3px;
+  font-size: 11px;
+  text-align: center;
+}
 .donut small {
   font-size: 11px;
   letter-spacing: 1px;
