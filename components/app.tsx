@@ -1,5 +1,4 @@
 "use client";
-import Image from "next/image";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   Home,
@@ -943,14 +942,9 @@ function Auth({
     [busy, setBusy] = useState(false);
   return (
     <main className="app auth">
-      <Image
-        className="auth-mark"
-        src={`${process.env.NEXT_PUBLIC_BASE_PATH || ""}/teslasharelogo.png`}
-        alt="Tesla Share logo"
-        width={64}
-        height={64}
-        preload
-      />
+      <div className="auth-mark">
+        <Car size={30} />
+      </div>
       <h1>Tesla Share</h1>
       <p className="subtitle">Danielle & Maya</p>
       <section className="card">

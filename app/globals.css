@@ -827,11 +827,14 @@ strong {
   text-align: center;
 }
 .auth-mark {
-  display: block;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   width: 64px;
   height: 64px;
   border-radius: 22px;
-  object-fit: contain;
+  background: #e3f3eb;
+  color: #008864;
   margin: 0 auto 21px;
 }
 .auth .card {
