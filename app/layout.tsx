@@ -14,7 +14,10 @@ export const metadata: Metadata = {
     statusBarStyle: "default",
     title: "Tesla Share",
   },
-  icons: { icon: `${base}/icon.svg`, apple: `${base}/icon-192.png` },
+  icons: {
+    icon: { url: `${base}/teslasharelogo.png`, type: "image/png", sizes: "1254x1254" },
+    apple: { url: `${base}/teslasharelogo.png`, type: "image/png", sizes: "1254x1254" },
+  },
 };
 export const viewport: Viewport = {
   width: "device-width",
