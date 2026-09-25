@@ -1,0 +1,24 @@
+node_modules/
+.next/
+out/
+.env*
+!.env.example
+playwright-report/
+test-results/
+*.tsbuildinfo
+.DS_Store
+
+# Local credentials and common credential exports
+env.local
+env.*.local
+*.env
+*.pem
+*.key
+*.p12
+*.pfx
+.npmrc
+supabase/.temp/
+supabase/.branches/
+
+# Private UI reference; not needed to build or deploy the app
+videoRef.mp4

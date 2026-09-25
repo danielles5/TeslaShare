@@ -1,0 +1,38 @@
+{
+  "name": "tesla-share",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build --webpack",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:e2e": "playwright test",
+    "seed": "node --env-file=.env.local --experimental-strip-types scripts/seed.ts",
+    "format": "prettier --write app components lib scripts tests e2e *.ts *.json *.mjs .github/workflows/*.yml",
+    "verify:live": "node --env-file=.env.local --experimental-strip-types scripts/verify-live.ts",
+    "check:connection": "node --env-file=.env.local scripts/check-connection.mjs"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.57.0",
+    "@fontsource/nunito-sans": "^5.2.6",
+    "lucide-react": "^0.468.0",
+    "next": "^16.3.6",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.55.0",
+    "@tailwindcss/postcss": "^4.1.0",
+    "@types/node": "^22.0.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "tailwindcss": "^4.1.0",
+    "typescript": "^5.9.0",
+    "vitest": "^5.0.1",
+    "@electric-sql/pglite": "^0.3.14",
+    "prettier": "^3.6.2"
+  },
+  "type": "module"
+}
