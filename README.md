@@ -99,6 +99,8 @@ A final two-device/iOS check still uses your actual phones: sign in on two devic
 
 ## GitHub Pages deployment
 
+The production URL is https://danielles5.github.io/TeslaShare/. The source repository is public; household records still require Supabase authentication. GitHub Free requires a public repository for Pages; keeping the source private requires a supported paid GitHub plan or a different host.
+
 1. Push this project to a GitHub repository with default branch `main`.
 2. In **Settings → Pages → Build and deployment**, select **GitHub Actions**.
 3. Add repository **Actions variables**:
@@ -129,3 +131,9 @@ This repository does not provision or deploy a Supabase project or GitHub reposi
 - [Next.js static exports](https://nextjs.org/docs/app/guides/static-exports)
 - [Supabase Row Level Security](https://supabase.com/docs/guides/database/postgres/row-level-security)
 - [Supabase sign-in and signup configuration](https://supabase.com/docs/guides/auth/general-configuration)
+
+To verify the deployed site with your local household test credentials (without creating entries):
+
+```sh
+VERIFY_BASE_URL=https://danielles5.github.io/TeslaShare/ node --env-file=.env.local scripts/verify-browser.mjs
+```

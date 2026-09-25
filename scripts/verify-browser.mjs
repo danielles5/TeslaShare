@@ -10,7 +10,7 @@ try {
   });
   const errors = [];
   page.on("pageerror", (error) => errors.push(error.message));
-  await page.goto("http://127.0.0.1:3000");
+  await page.goto(process.env.VERIFY_BASE_URL || "http://127.0.0.1:3000");
   await page.getByLabel("Email", { exact: true }).fill(process.env.SEED_EMAIL);
   await page
     .getByLabel("Password", { exact: true })
@@ -21,7 +21,29 @@ try {
   await page.getByRole("button", { name: "Sign in", exact: true }).click();
   await response;
   await page
-    .getByRole("button", { name: "Start Drive", exact: true })
+    .getByRole("heading", { name: "Tesla Share", exact: true })
+    .waitFor();
+  const manifestUrl = await page
+    .locator('link[rel="manifest"]')
+    .getAttribute("href");
+  const manifestResponse = await page.request.get(
+    new URL(manifestUrl, page.url()).href,
+  );
+  assert.equal(manifestResponse.status(), 200);
+  const manifest = await manifestResponse.json();
+  for (const icon of manifest.icons) {
+    const iconResponse = await page.request.get(
+      new URL(icon.src, manifestResponse.url()).href,
+    );
+    assert.equal(iconResponse.status(), 200);
+  }
+  const reloadResponse = page.waitForResponse(
+    (r) => r.url().endsWith("/rpc/household_snapshot") && r.status() === 200,
+  );
+  await page.reload();
+  await reloadResponse;
+  await page
+    .getByRole("heading", { name: "Tesla Share", exact: true })
     .waitFor();
   await page.screenshot({ path: "test-results/live-home.png" });
   await page.getByRole("button", { name: "Dashboard", exact: true }).click();
