@@ -269,9 +269,7 @@ export function Dashboard({
               <p className="chart-caption">Tap a month · scroll for older</p>
             </section>
           )}
-          <section
-            className={`card${tab === "month" ? " dashboard-refined" : ""}`}
-          >
+          <section className="card dashboard-refined">
             <h3>
               {tab === "month"
                 ? monthLabel(selected, true)
@@ -282,12 +280,8 @@ export function Dashboard({
             <Donut
               usage={stats.usage}
               compact={tab === "month"}
-              showCaption={tab !== "month"}
-              responsibility={
-                tab === "month"
-                  ? monthlyResponsibility(stats.usage, stats.spend)
-                  : undefined
-              }
+              showCaption={false}
+              responsibility={monthlyResponsibility(stats.usage, stats.spend)}
               label={
                 tab === "year"
                   ? year

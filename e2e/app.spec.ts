@@ -349,3 +349,66 @@ test("an unavailable initial snapshot never displays a false settled balance", a
     page.getByRole("button", { name: "Retry connection" }),
   ).toBeVisible();
 });
+
+test("year and all-time reuse period styling and calendar responsibility", async ({
+  page,
+}) => {
+  await page.clock.setFixedTime(new Date("2026-09-30T12:00:00Z"));
+  const demo = demoData();
+  const priorYear = demo.events
+    .filter((e) => e.started_at.startsWith("2026-06"))
+    .map((e) => ({
+      ...e,
+      id: `prior-${e.id}`,
+      demo_batch_id: "prior-year",
+      started_at: e.started_at.replace("2026", "2025"),
+      ended_at: e.ended_at!.replace("2026", "2025"),
+    }));
+  await backend(page, {
+    household: { id: "h", name: "Danielle & Maya" },
+    ...demo,
+    events: [...priorYear, ...demo.events],
+  });
+  await page.getByRole("button", { name: "Dashboard", exact: true }).click();
+  const style = () =>
+    page
+      .locator(".dashboard-refined")
+      .last()
+      .evaluate((card) => ({
+        ring: getComputedStyle(card.querySelector(".donut")!).padding,
+        size: getComputedStyle(card.querySelector(".donut")!).width,
+        heading: getComputedStyle(card.querySelector("h3")!).fontWeight,
+        km: getComputedStyle(card.querySelector(".totals strong")!).fontWeight,
+      }));
+  const periodStyle = await style();
+  const recent = await page.locator(".settlement-list").innerHTML();
+  for (const [tab, spend, danielle, maya] of [
+    ["This Year", "₪292.00", "₪159.95", "₪132.05"],
+    ["All Time", "₪342.00", "₪190.72", "₪151.28"],
+  ]) {
+    await page.getByRole("button", { name: tab, exact: true }).click();
+    expect(await style()).toEqual(periodStyle);
+    await expect(
+      page.getByText("Danielle vs Maya", { exact: true }),
+    ).toHaveCount(0);
+    await expect(page.locator(".monthly-responsibility")).toHaveText([
+      `Responsibility · ${danielle}`,
+      `Responsibility · ${maya}`,
+    ]);
+    await expect(
+      page
+        .locator(".metric")
+        .filter({ hasText: "Charging spend" })
+        .locator("strong"),
+    ).toHaveText(spend);
+    await expect(page.locator(".settlement-list")).toHaveJSProperty(
+      "innerHTML",
+      recent,
+    );
+    expect(
+      await page.evaluate(
+        () => document.documentElement.scrollWidth <= innerWidth,
+      ),
+    ).toBe(true);
+  }
+});
