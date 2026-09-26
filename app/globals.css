@@ -940,3 +940,167 @@ strong {
     scroll-behavior: auto !important;
   }
 }
+
+/* Layout hooks do not create boxes in the original phone layout. */
+.home-layout {
+  display: contents;
+}
+
+/* Expand only when two comfortable card columns fit the available viewport. */
+@media (min-width: 720px) {
+  .app:not(.auth) {
+    max-width: 880px;
+  }
+  .content {
+    padding-right: 28px;
+    padding-left: 28px;
+  }
+  .bottom-nav {
+    max-width: 640px;
+    border: 1px solid var(--border);
+    border-bottom: 0;
+    border-radius: 20px 20px 0 0;
+  }
+  .sheet-backdrop {
+    align-items: center;
+    padding: 24px;
+  }
+  .sheet {
+    max-width: 520px;
+    max-height: min(90dvh, calc(100dvh - 48px));
+    margin-bottom: 0;
+  }
+  .home-layout,
+  .content-history,
+  .content-settings {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px;
+    align-items: start;
+    align-content: start;
+  }
+  .home-layout > *,
+  .content > *,
+  .dashboard-refined > * {
+    min-width: 0;
+  }
+  .home-header,
+  .content-history > h1,
+  .content-settings > h1,
+  .content > .preview-banner,
+  .content > .error,
+  .history-tabs,
+  .content-history > .settlement-list,
+  .content-history > .empty {
+    grid-column: 1 / -1;
+  }
+  .home-header {
+    margin-bottom: 0;
+  }
+  .home-layout > .balance-card {
+    grid-column: 1;
+    grid-row: 2;
+    margin: 0;
+  }
+  .home-layout > .button {
+    grid-column: 1;
+    grid-row: 3;
+  }
+  .home-actions,
+  .home-layout > .active-card {
+    grid-column: 2;
+    grid-row: 2 / 4;
+    margin: 0;
+  }
+  .home-layout > .period-card {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 28px;
+    margin: 0;
+  }
+  .home-layout > .period-card > .between,
+  .home-layout > .period-card > .hint {
+    grid-column: 1 / -1;
+  }
+  .dashboard-tabs {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+  .dashboard-donut-card {
+    display: grid;
+    grid-template-columns: 230px minmax(0, 1fr);
+    column-gap: 28px;
+  }
+  .dashboard-donut-card > h3 {
+    grid-column: 1 / -1;
+  }
+  .dashboard-donut-card > .donut {
+    grid-column: 1;
+    grid-row: 2 / span 20;
+    align-self: center;
+    margin: 12px auto;
+  }
+  .dashboard-donut-card > :not(h3):not(.donut) {
+    grid-column: 2;
+  }
+  .dashboard-donut-card .totals {
+    margin-top: 8px;
+  }
+  .settlement-list {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px 20px;
+    margin-top: 14px;
+  }
+  .settlement-list > .card,
+  .content-history > .card,
+  .content-settings > .card,
+  .content-history > .history-tabs {
+    margin-top: 0;
+  }
+  .settlement-list > .empty {
+    grid-column: 1 / -1;
+  }
+  .content-settings > .button {
+    max-width: 360px;
+  }
+  .content-detail {
+    max-width: 820px;
+    margin: auto;
+  }
+}
+
+@media (min-width: 1024px) {
+  .app:not(.auth) {
+    max-width: 1160px;
+  }
+  .content {
+    padding-right: 36px;
+    padding-left: 36px;
+  }
+  .content-dashboard {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px 24px;
+    align-content: start;
+    align-items: start;
+  }
+  .content-dashboard > h1,
+  .content-dashboard > .dashboard-tabs,
+  .content-dashboard > .dashboard-donut-card,
+  .content-dashboard > .section-label,
+  .content-dashboard > .settlement-list {
+    grid-column: 1 / -1;
+  }
+  .content-dashboard > .card,
+  .content-dashboard > .dashboard-tabs,
+  .content-dashboard > .settlement-list {
+    margin-top: 0;
+  }
+  .content-dashboard > .section-label {
+    margin-top: 8px;
+  }
+  .dashboard-donut-card {
+    grid-template-columns: minmax(230px, 0.85fr) minmax(0, 1fr);
+  }
+}

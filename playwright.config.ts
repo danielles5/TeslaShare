@@ -2,6 +2,9 @@ import { defineConfig, devices } from "@playwright/test";
 export default defineConfig({
   testDir: "./e2e",
   fullyParallel: true,
+  snapshotPathTemplate: process.env.RESPONSIVE_BASELINE
+    ? `${process.env.RESPONSIVE_BASELINE}/{arg}{ext}`
+    : undefined,
   use: {
     baseURL: "http://127.0.0.1:3100",
     ...devices["iPhone 13"],

@@ -130,42 +130,51 @@ async function finishDrive(page: Page, range = "360") {
   await page.getByRole("button", { name: "Save & End Drive" }).click();
   await expect(page.getByRole("dialog")).toHaveCount(0);
 }
-test("persisted drive → charge → settlement → partial repayment survives refresh", async ({
-  page,
-}) => {
-  const api = await backend(page);
-  await startDrive(page);
-  await page.reload();
-  await expect(page.getByText("Drive in progress")).toBeVisible();
-  await finishDrive(page);
-  await page.getByRole("button", { name: "Start Charge", exact: true }).click();
-  const sheet = page.getByRole("dialog");
-  await sheet.getByRole("button", { name: "Maya", exact: true }).click();
-  await sheet
-    .getByLabel("Current displayed range", { exact: true })
-    .fill("359");
-  await expect(sheet.getByText("Parked loss 1 km → Maya +1 km")).toBeVisible();
-  await sheet
-    .getByRole("button", { name: "Start Charge", exact: true })
-    .click();
-  await page.reload();
-  await expect(page.getByText("Charging in progress")).toBeVisible();
-  await page.getByRole("button", { name: "End Charge", exact: true }).click();
-  await page.getByLabel("Displayed range after charging").fill("400");
-  await page.getByLabel("Total cost", { exact: true }).fill("100");
-  await page.getByRole("button", { name: "Save & Finish" }).click();
-  await expect(
-    page.getByText("Maya owes Danielle", { exact: true }),
-  ).toBeVisible();
-  await page.getByRole("button", { name: "Settle Debt", exact: true }).click();
-  await page.getByLabel("Amount", { exact: true }).fill("30");
-  await page.getByRole("button", { name: "Record Repayment" }).click();
-  await expect(page.getByRole("heading", { name: "₪70.00" })).toBeVisible();
-  expect(api.state().events).toHaveLength(2);
-  expect(api.state().repayments).toHaveLength(1);
-  await page.reload();
-  await expect(page.getByRole("heading", { name: "₪70.00" })).toBeVisible();
-});
+for (const width of [390, 1024, 1280]) {
+  test(`persisted drive → charge → settlement → partial repayment survives refresh at ${width}px`, async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width, height: width >= 1024 ? 1024 : 844 });
+    const api = await backend(page);
+    await startDrive(page);
+    await page.reload();
+    await expect(page.getByText("Drive in progress")).toBeVisible();
+    await finishDrive(page);
+    await page
+      .getByRole("button", { name: "Start Charge", exact: true })
+      .click();
+    const sheet = page.getByRole("dialog");
+    await sheet.getByRole("button", { name: "Maya", exact: true }).click();
+    await sheet
+      .getByLabel("Current displayed range", { exact: true })
+      .fill("359");
+    await expect(
+      sheet.getByText("Parked loss 1 km → Maya +1 km"),
+    ).toBeVisible();
+    await sheet
+      .getByRole("button", { name: "Start Charge", exact: true })
+      .click();
+    await page.reload();
+    await expect(page.getByText("Charging in progress")).toBeVisible();
+    await page.getByRole("button", { name: "End Charge", exact: true }).click();
+    await page.getByLabel("Displayed range after charging").fill("400");
+    await page.getByLabel("Total cost", { exact: true }).fill("100");
+    await page.getByRole("button", { name: "Save & Finish" }).click();
+    await expect(
+      page.getByText("Maya owes Danielle", { exact: true }),
+    ).toBeVisible();
+    await page
+      .getByRole("button", { name: "Settle Debt", exact: true })
+      .click();
+    await page.getByLabel("Amount", { exact: true }).fill("30");
+    await page.getByRole("button", { name: "Record Repayment" }).click();
+    await expect(page.getByRole("heading", { name: "₪70.00" })).toBeVisible();
+    expect(api.state().events).toHaveLength(2);
+    expect(api.state().repayments).toHaveLength(1);
+    await page.reload();
+    await expect(page.getByRole("heading", { name: "₪70.00" })).toBeVisible();
+  });
+}
 test("manual Shared estimate and deleting source survive refresh", async ({
   page,
 }) => {

@@ -216,7 +216,9 @@ export default function App() {
   const selected = derived.settlements.find((s) => s.id === detail);
   return (
     <div className="app">
-      <main className="content">
+      <main
+        className={`content content-${selected ? "detail" : tab.toLowerCase()}`}
+      >
         {preview && (
           <div className="preview-banner">
             Read-only preview{" "}
@@ -252,7 +254,7 @@ export default function App() {
         ) : (
           <>
             {tab === "Home" && (
-              <>
+              <div className="home-layout">
                 <header className="home-header">
                   <div>
                     <h1>Tesla Share</h1>
@@ -357,7 +359,7 @@ export default function App() {
                     </p>
                   )}
                 </section>
-              </>
+              </div>
             )}
             {tab === "Dashboard" && (
               <Dashboard

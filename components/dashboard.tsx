@@ -178,7 +178,7 @@ export function Dashboard({
       </div>
       {tab === "period" ? (
         <>
-          <section className="card dashboard-refined period-card">
+          <section className="card dashboard-refined period-card dashboard-donut-card">
             <h3>This charging period</h3>
             <Donut
               usage={derived.open.usage}
@@ -208,7 +208,7 @@ export function Dashboard({
       ) : (
         <>
           {tab === "month" && (
-            <section className="card dashboard-refined">
+            <section className="card dashboard-refined dashboard-month-chart">
               <h3>Monthly breakdown</h3>
               <div className="legend">
                 <span>
@@ -269,7 +269,9 @@ export function Dashboard({
               <p className="chart-caption">Tap a month · scroll for older</p>
             </section>
           )}
-          <section className="card dashboard-refined">
+          <section
+            className={`card dashboard-refined ${tab === "month" ? "dashboard-month-detail" : "dashboard-donut-card"}`}
+          >
             <h3>
               {tab === "month"
                 ? monthLabel(selected, true)
