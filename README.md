@@ -137,3 +137,13 @@ To verify the deployed site with your local household test credentials (without 
 ```sh
 VERIFY_BASE_URL=https://danielles5.github.io/TeslaShare/ node --env-file=.env.local scripts/verify-browser.mjs
 ```
+
+## Read-only spreadsheet export
+
+In **Settings → Data Export**, choose **Export All Data (.xlsx)**. The browser creates `TeslaTrack_Export_YYYY-MM-DD.xlsx` with Summary, Drives, Charges, Settlements, Settlement Participants, Usage Allocations, and Repayments tabs. The filename date follows Asia/Jerusalem. Spreadsheet dates are UTC, with original timestamp strings preserved alongside them. Numbers remain numeric; currency formatting does not round stored values. All existing demo and active records are included and missing values remain blank.
+
+The exporter uses authorized, paginated `SELECT` requests with exact counts and explicit field allowlists. It does not call the household snapshot/mutation RPCs, change records, run migrations, or rebuild settlements. Because this schema stores source events and repayments rather than settlement/allocation tables, export copies the app's existing derived financial state only after verifying its source rows exactly match the complete fetched data. If anything changed, refresh the app and retry; no partial file is produced. Finalized responsibility is labeled separately from the informational Dashboard estimates (which are not exported).
+
+Files can be imported into Google Sheets without Excel. If automatic download is blocked, use **Download prepared file**, or **Save or share file** when supported. Preparing files happens locally using the lazy-loaded `write-excel-file` library. Workbook generation is memory-bound and subject to the XLSX row limit; the app fails rather than truncates. Standard numeric cells use spreadsheet/JavaScript floating-point precision; original timestamps retain any precision beyond spreadsheet dates. Direct Google Sheets import and a physical iPhone Home Screen installation still require device/account verification; automated Chromium/WebKit download tests and independent XLSX-reader validation cover the generated format and fallback controls.
+
+Export tests: `npm test` and `npm run test:e2e`. To additionally run Safari-engine export checks, install Playwright WebKit and run `EXPORT_BROWSER=webkit npx playwright test e2e/export.spec.ts`.

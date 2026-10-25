@@ -1,4 +1,5 @@
 "use client";
+import { DataExport } from "./data-export";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   Home,
@@ -455,6 +456,7 @@ export default function App() {
                     Sign out
                   </button>
                 )}
+                <DataExport data={data} derived={derived} preview={preview} />
               </>
             )}
           </>
