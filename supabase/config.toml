@@ -1,0 +1,4 @@
+# This function validates user JWTs with auth.getUser(), and validates scheduled
+# calls with a separate private secret. No unauthenticated action is permitted.
+[functions.drive-reminders]
+verify_jwt = false

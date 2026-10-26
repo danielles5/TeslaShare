@@ -147,3 +147,7 @@ The exporter uses authorized, paginated `SELECT` requests with exact counts and 
 Files can be imported into Google Sheets without Excel. If automatic download is blocked, use **Download prepared file**, or **Save or share file** when supported. Preparing files happens locally using the lazy-loaded `write-excel-file` library. Workbook generation is memory-bound and subject to the XLSX row limit; the app fails rather than truncates. Standard numeric cells use spreadsheet/JavaScript floating-point precision; original timestamps retain any precision beyond spreadsheet dates. Direct Google Sheets import and a physical iPhone Home Screen installation still require device/account verification; automated Chromium/WebKit download tests and independent XLSX-reader validation cover the generated format and fallback controls.
 
 Export tests: `npm test` and `npm run test:e2e`. To additionally run Safari-engine export checks, install Playwright WebKit and run `EXPORT_BROWSER=webkit npx playwright test e2e/export.spec.ts`.
+
+## Drive Reminders
+
+The additive implementation and exact backend deployment/activation steps are documented in [docs/drive-reminders.md](docs/drive-reminders.md). The approved notification backend is deployed. Automatic reminders remain disabled until both iPhones register and receive test notifications; see the separate activation step.

@@ -1,5 +1,6 @@
 "use client";
 import { DataExport } from "./data-export";
+import { DriveReminders } from "./drive-reminders";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   Home,
@@ -457,6 +458,7 @@ export default function App() {
                   </button>
                 )}
                 <DataExport data={data} derived={derived} preview={preview} />
+                <DriveReminders preview={preview} />
               </>
             )}
           </>
